@@ -30,8 +30,8 @@ use MoySklad\Response\ApiResponse;
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     https://online.moysklad.ru/api/remap/1.1/doc/index.html
  */
-class Client
-{
+class Client {
+
     /**
      * URL from JsonAPI
      */
@@ -94,8 +94,7 @@ class Client
      * @param string $login    api login
      * @param string $password api password
      */
-    public function __construct($login, $password)
-    {
+    public function __construct($login, $password) {
         $this->login = $login;
         $this->password = $password;
         $this->retry = 0;
@@ -117,9 +116,7 @@ class Client
      * @return ApiResponse
      */
     public function makeRequest(
-        $url,
-        $method = 'GET',
-        array $parameters = array()
+    $url, $method = 'GET', array $parameters = array()
     ) {
         time_nanosleep(0, 250000000);
 
@@ -127,11 +124,9 @@ class Client
 
         if (!in_array($method, $allowedMethods, false)) {
             throw new \InvalidArgumentException(
-                sprintf(
-                    'Method "%s" is not valid. Allowed methods are %s',
-                    $method,
-                    implode(', ', $allowedMethods)
-                )
+            sprintf(
+                    'Method "%s" is not valid. Allowed methods are %s', $method, implode(', ', $allowedMethods)
+            )
             );
         }
 
@@ -152,16 +147,15 @@ class Client
         curl_setopt($curlHandler, CURLOPT_CONNECTTIMEOUT, 60);
 
         if (
-            !is_null($parameters) &&
-            in_array($method, array(self::METHOD_POST, self::METHOD_PUT)) &&
-            !empty($parameters['data'])
+                !is_null($parameters) &&
+                in_array($method, array(self::METHOD_POST, self::METHOD_PUT)) &&
+                !empty($parameters['data'])
         ) {
             if (strlen(json_encode($parameters['data'])) > self::MAX_DATA_VALUE) {
                 throw new MoySkladException(
-                    sprintf(
-                        'The POST data size should not exceed `%s` bytes',
-                        self::MAX_DATA_VALUE
-                    )
+                sprintf(
+                        'The POST data size should not exceed `%s` bytes', self::MAX_DATA_VALUE
+                )
                 );
             }
             curl_setopt($curlHandler, CURLOPT_HTTPHEADER, array(
@@ -200,9 +194,7 @@ class Client
             $error = null;
             $this->retry += 1;
             $this->makeRequest(
-                $url,
-                $method,
-                $parameters
+                    $url, $method, $parameters
             );
         }
 
@@ -220,8 +212,7 @@ class Client
      * @return string
      * @access private
      */
-    private function httpBuildQuery($parameters)
-    {
+    private function httpBuildQuery($parameters) {
         if (is_array($parameters)) {
             $params = array();
             $filter = '';
@@ -249,8 +240,7 @@ class Client
      * @return string
      * @access private
      */
-    private function buildFilter($filters)
-    {
+    private function buildFilter($filters) {
         $params = '';
         foreach ($filters as $filter) {
             if (!in_array($filter['operand'], self::FILTER_OPERANDS)) {
@@ -271,21 +261,21 @@ class Client
      * @return string
      * @access private
      */
-    private function getError($result)
-    {
+    private function getError($result) {
         $error = "";
-        if(!empty($result['errors'])){
+        if (!empty($result['errors'])) {
             foreach ($result['errors'] as $err) {
-                if(!empty($err['parameter'])){
-                    $error .= "[".date("Y-m-d H:i:s")."] Error ".$err['parameter'].": ".$err['error']."\n";
-                }else{
-                    $error .= "[".date("Y-m-d H:i:s")."] Error: ".$err['error']."\n";
+                if (!empty($err['parameter'])) {
+                    $error .= "[" . date("Y-m-d H:i:s") . "] Error " . $err['parameter'] . ": " . $err['error'] . "\n";
+                } else {
+                    $error .= "[" . date("Y-m-d H:i:s") . "] Error: " . $err['error'] . "\n";
                 }
             }
-        }else{
-            $error = "[".date("Y-m-d H:i:s")."] Internal server error";
+        } else {
+            $error = "[" . date("Y-m-d H:i:s") . "] Internal server error";
         }
 
         return $error;
     }
+
 }

@@ -28,11 +28,10 @@ use MoySklad\Exception\MoySkladException;
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     https://online.moysklad.ru/api/remap/1.1/doc/index.html
  */
-class ApiResponse implements \ArrayAccess
-{
+class ApiResponse implements \ArrayAccess {
+
     // HTTP response status code
     protected $statusCode;
-
     // response assoc array
     protected $response;
 
@@ -44,8 +43,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @throws InvalidJsonException
      */
-    public function __construct($statusCode, $responseBody = null)
-    {
+    public function __construct($statusCode, $responseBody = null) {
         $this->statusCode = (int) $statusCode;
 
         if (!empty($responseBody)) {
@@ -53,8 +51,7 @@ class ApiResponse implements \ArrayAccess
 
             if (!$response && JSON_ERROR_NONE !== ($error = json_last_error())) {
                 throw new InvalidJsonException(
-                    "Invalid JSON in the API response body. Error code #$error",
-                    $error
+                "Invalid JSON in the API response body. Error code #$error", $error
                 );
             }
 
@@ -67,8 +64,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return int
      */
-    public function getStatusCode()
-    {
+    public function getStatusCode() {
         return $this->statusCode;
     }
 
@@ -77,8 +73,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return array
      */
-    public function getResponseBody()
-    {
+    public function getResponseBody() {
         if (!$this->isSuccessful()) {
             throw new MoySkladException("MoySklad return \"{$this->getStatusCode()}\" status code");
         }
@@ -91,8 +86,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return bool
      */
-    public function isSuccessful()
-    {
+    public function isSuccessful() {
         return $this->statusCode < 400;
     }
 
@@ -106,8 +100,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return mixed
      */
-    public function __call($name, $arguments)
-    {
+    public function __call($name, $arguments) {
         // convert getSomeProperty to someProperty
         $propertyName = strtolower(substr($name, 3, 1)) . substr($name, 4);
 
@@ -127,8 +120,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return mixed
      */
-    public function __get($name)
-    {
+    public function __get($name) {
         if (!isset($this->response[$name])) {
             throw new \InvalidArgumentException("Property \"$name\" not found");
         }
@@ -145,8 +137,7 @@ class ApiResponse implements \ArrayAccess
      * @throws \BadMethodCallException
      * @return void
      */
-    public function offsetSet($offset, $value)
-    {
+    public function offsetSet($offset, $value) {
         throw new \BadMethodCallException('This activity not allowed');
     }
 
@@ -158,8 +149,7 @@ class ApiResponse implements \ArrayAccess
      * @throws \BadMethodCallException
      * @return void
      */
-    public function offsetUnset($offset)
-    {
+    public function offsetUnset($offset) {
         throw new \BadMethodCallException('This call not allowed');
     }
 
@@ -170,8 +160,7 @@ class ApiResponse implements \ArrayAccess
      *
      * @return bool
      */
-    public function offsetExists($offset)
-    {
+    public function offsetExists($offset) {
         return isset($this->response[$offset]);
     }
 
@@ -184,12 +173,12 @@ class ApiResponse implements \ArrayAccess
      *
      * @return mixed
      */
-    public function offsetGet($offset)
-    {
+    public function offsetGet($offset) {
         if (!isset($this->response[$offset])) {
             throw new \InvalidArgumentException("Property \"$offset\" not found");
         }
 
         return $this->response[$offset];
     }
+
 }

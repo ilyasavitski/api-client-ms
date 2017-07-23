@@ -28,8 +28,8 @@ use MoySklad\Response\ApiResponse;
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     https://online.moysklad.ru/api/remap/1.1/doc/index.html
  */
-class ApiClient
-{
+class ApiClient {
+
     /**
      * Requests
      */
@@ -41,7 +41,7 @@ class ApiClient
         'cashiers',
         'positions'
     );
-    
+
     /**
      * JsonAPI client МойСклад
      * @var client
@@ -111,7 +111,8 @@ class ApiClient
         "isDeleted",
         "limit",
         "offset",
-        "filters"
+        "filters",
+        "expand"
     );
 
     /**
@@ -120,8 +121,7 @@ class ApiClient
      * @param string $login    api login
      * @param string $password api password
      */
-    public function __construct($login, $password)
-    {
+    public function __construct($login, $password) {
         $this->client = new Client($login, $password);
     }
 
@@ -140,10 +140,8 @@ class ApiClient
      * @access public
      */
     public function getData(
-        $params,
-        $filters = null
-    )
-    {
+    $params, $filters = null
+    ) {
         if (empty($params)) {
             throw new \InvalidArgumentException('The `params` can not be empty');
         }
@@ -163,13 +161,12 @@ class ApiClient
             case 2:
                 if (!empty(array_diff(array_keys($filters), $this->main_filters))) {
                     throw new \InvalidArgumentException(
-                        sprintf(
-                            'Wrong attributes: `%s`',
-                            implode(', ', array_diff(array_keys($filters), $this->main_filters))
-                        )
+                    sprintf(
+                            'Wrong attributes: `%s`', implode(', ', array_diff(array_keys($filters), $this->main_filters))
+                    )
                     );
                 }
-                foreach ($filters as $index=>$value) {
+                foreach ($filters as $index => $value) {
                     $filter[$index] = $value;
                 }
                 unset($index, $value);
@@ -195,9 +192,7 @@ class ApiClient
         }
 
         return $this->client->makeRequest(
-            $uri,
-            Client::METHOD_GET,
-            $filter
+                        $uri, Client::METHOD_GET, $filter
         );
     }
 
@@ -215,8 +210,7 @@ class ApiClient
      *
      * @access public
      */
-    public function createData($param, $data)
-    {
+    public function createData($param, $data) {
         if (is_array($param)) {
             $type = $param[0];
             $uuid = $param[1];
@@ -228,9 +222,7 @@ class ApiClient
         $parameters['data'] = $data;
 
         return $this->client->makeRequest(
-            $this->entity[$type] . '/' . $type . (!is_null($uuid) ? ('/'.$uuid) : ''),
-            Client::METHOD_POST,
-            $parameters
+                        $this->entity[$type] . '/' . $type . (!is_null($uuid) ? ('/' . $uuid) : ''), Client::METHOD_POST, $parameters
         );
     }
 
@@ -249,16 +241,13 @@ class ApiClient
      *
      * @access public
      */
-    public function updateData($type, $uuid, $data)
-    {
+    public function updateData($type, $uuid, $data) {
         $this->checkUuid($uuid);
 
         $parameters['data'] = $data;
 
         return $this->client->makeRequest(
-            sprintf($this->entity[$type] . '/' . $type . '/%s', $uuid),
-            Client::METHOD_PUT,
-            $parameters
+                        sprintf($this->entity[$type] . '/' . $type . '/%s', $uuid), Client::METHOD_PUT, $parameters
         );
     }
 
@@ -276,13 +265,11 @@ class ApiClient
      *
      * @access public
      */
-    public function deleteData($type, $uuid)
-    {
+    public function deleteData($type, $uuid) {
         $this->checkUuid($uuid);
 
         return $this->client->makeRequest(
-            sprintf($this->entity[$type] . '/' . $type . '/%s', $uuid),
-            Client::METHOD_DELETE
+                        sprintf($this->entity[$type] . '/' . $type . '/%s', $uuid), Client::METHOD_DELETE
         );
     }
 
@@ -293,8 +280,7 @@ class ApiClient
      * @throws \InvalidArgumentException
      * @access private
      */
-    private function checkUuid($uuid)
-    {
+    private function checkUuid($uuid) {
         if (is_null($uuid) || empty($uuid)) {
             throw new \InvalidArgumentException('The `uuid` can not be empty');
         }
@@ -306,4 +292,5 @@ class ApiClient
             throw new \InvalidArgumentException('The `uuid` has invalid format');
         }
     }
+
 }
