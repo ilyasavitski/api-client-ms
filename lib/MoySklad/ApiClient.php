@@ -111,7 +111,7 @@ class ApiClient {
         "isDeleted",
         "limit",
         "offset",
-        "filters",
+        "filter",
         "expand"
     );
 
