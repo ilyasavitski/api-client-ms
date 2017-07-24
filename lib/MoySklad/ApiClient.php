@@ -112,7 +112,8 @@ class ApiClient {
         "limit",
         "offset",
         "filter",
-        "expand"
+        "expand",
+        "order"
     );
 
     /**
