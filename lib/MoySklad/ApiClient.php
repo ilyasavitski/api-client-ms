@@ -89,6 +89,7 @@ class ApiClient {
         "customentity" => "entity",
         "salesreturn" => "entity",
         "purchasereturn" => "entity",
+        "processingplan" => "entity",
         "stock" => "report",
         "assortment" => "pos",
         "openshift" => "pos",
